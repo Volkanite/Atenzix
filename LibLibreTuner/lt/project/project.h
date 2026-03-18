@@ -37,7 +37,7 @@ public:
      * cannot be determined. */
     RomPtr importRom(const std::string & name,
                      const std::filesystem::path & path,
-                     lt::PlatformPtr platform);
+                     Platforms * platforms);
 
     /* Loads tune by id. Returns a null pointer if the path does not
      * exist. Throws an exception if it cannot be deserialized or the base

@@ -415,4 +415,17 @@ ModelPtr Platforms::find(const std::string & platformId,
     return platform->findModel(modelId);
 }
 
+ModelPtr Platforms::identifyModel(const uint8_t * data, size_t size)
+{
+    for (const PlatformPtr & platform : platforms_)
+    {
+        ModelPtr model = platform->identify(data, size);
+
+        if(model)
+            return model;
+    }
+
+    return nullptr;
+}
+
 } // namespace lt

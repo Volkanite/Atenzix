@@ -229,7 +229,7 @@ RomPtr Project::createRom(const std::string & name, lt::ModelPtr model)
 
 RomPtr Project::importRom(const std::string & name,
                           const std::filesystem::path & path,
-                          lt::PlatformPtr platform)
+                          Platforms * platforms)
 {
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     if (!file.is_open())
@@ -246,12 +246,11 @@ RomPtr Project::importRom(const std::string & name,
     file.close();
 
     // Identify model
-    lt::ModelPtr model = platform->identify(
+    lt::ModelPtr model = platforms->identifyModel(
         reinterpret_cast<const uint8_t *>(buffer.data()), buffer.size());
     if (!model)
         throw std::runtime_error(
-            "failed to identify model from ROM data for platform '" +
-            platform->name + "'");
+            "failed to identify model from ROM data using loaded definitions");
 
     lt::RomPtr rom = createRom(name, model);
     rom->setData(MemoryBuffer(std::move(buffer)));

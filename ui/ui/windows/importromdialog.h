@@ -26,7 +26,7 @@ public slots:
 private:
     QLineEdit * lineName_;
     QLineEdit * linePath_;
-    QComboBox * comboPlatform_;
+    //QComboBox * comboPlatform_;
     ProjectCombo * comboProject_;
 };
 

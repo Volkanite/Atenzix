@@ -23,9 +23,10 @@ ImportRomDialog::ImportRomDialog(lt::ProjectPtr project, QWidget * parent)
     : QDialog(parent)
 {
     setWindowTitle(tr("LibreTuner - Import ROM"));
+    resize(350, 140);
 
-    comboPlatform_ = new QComboBox;
-    comboPlatform_->setModel(new PlatformsModel(&LT()->definitions(), this));
+    //comboPlatform_ = new QComboBox;
+    //comboPlatform_->setModel(new PlatformsModel(&LT()->definitions(), this));
 
     comboProject_ = new ProjectCombo;
 
@@ -42,7 +43,7 @@ ImportRomDialog::ImportRomDialog(lt::ProjectPtr project, QWidget * parent)
     // Main options
     auto * form = new QFormLayout;
     form->addRow(tr("Project"), comboProject_);
-    form->addRow(tr("Platform"), comboPlatform_);
+    //form->addRow(tr("Platform"), comboPlatform_);
     form->addRow(tr("Path"), pathLayout);
     form->addRow(tr("Name"), lineName_);
 
@@ -69,8 +70,8 @@ ImportRomDialog::ImportRomDialog(lt::ProjectPtr project, QWidget * parent)
 
     connect(buttonClose, &QPushButton::clicked, this, &QDialog::reject);
 
-    connect(comboPlatform_, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-            &ImportRomDialog::platformChanged);
+    /*connect(comboPlatform_, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &ImportRomDialog::platformChanged);*/
 
     connect(buttonBrowse, &QPushButton::clicked, [this]() {
         QString path = QFileDialog::getOpenFileName(nullptr, tr("Select raw ROM file"), linePath_->text(),
@@ -85,15 +86,15 @@ ImportRomDialog::ImportRomDialog(lt::ProjectPtr project, QWidget * parent)
         }
     });
 
-    if (comboPlatform_->count() > 0)
-        platformChanged(comboPlatform_->currentIndex());
+    /*if (comboPlatform_->count() > 0)
+        platformChanged(comboPlatform_->currentIndex());*/
 
     connect(buttonImport, &QPushButton::clicked, [this]() {
-        QVariant var = comboPlatform_->currentData(Qt::UserRole);
+        /*QVariant var = comboPlatform_->currentData(Qt::UserRole);
         if (!var.canConvert<lt::PlatformPtr>())
-            return;
+            return;*/
 
-        auto platform = var.value<lt::PlatformPtr>();
+        //auto platform = var.value<lt::PlatformPtr>();
 
         catchWarning(
             [&]() {
@@ -101,7 +102,7 @@ ImportRomDialog::ImportRomDialog(lt::ProjectPtr project, QWidget * parent)
                 if (!project)
                     return;
                 // Import and save ROM
-                project->importRom(lineName_->text().toStdString(), linePath_->text().toStdString(), platform)->save();
+                project->importRom(lineName_->text().toStdString(), linePath_->text().toStdString(), &LT()->definitions())->save();
                 accept();
             },
             tr("Error importing ROM"));

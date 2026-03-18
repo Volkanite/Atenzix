@@ -103,6 +103,10 @@ public:
      * a null pointer if the search fails. */
     PlatformPtr find(const std::string & id) const noexcept;
 
+    /* Attempts to determine the model of the data, based on loaded definitions.
+     * Returns nullptr if no models match. */
+    ModelPtr identifyModel(const uint8_t * data, size_t size);
+
     /* Searches for a model by first searching for the platform id `platformId`
      * and then searching for the model `modelId`. Returns a null ptr if the
      * search fails. */
