@@ -480,12 +480,16 @@ void MainWindow::setupMenu()
     /*QAction * logAction =*/ toolsMenu->addAction(tr("&CAN Log"));
     // connect(logAct, &QAction::triggered, [this] { canViewer_.show(); });
     QAction * infoAction = toolsMenu->addAction(tr("Vehicle Information"));
-    connect(infoAction, &QAction::triggered, [this]() {
-        if (infoWidget_ == nullptr)
+    connect(infoAction, &QAction::triggered, [this]()
+    {
+        if (infoWidget_ != nullptr)
         {
-            infoWidget_ = new VehicleInformationWidget(this);
-            infoWidget_->setWindowFlag(Qt::Window);
+            infoWidget_->setAttribute( Qt::WA_DeleteOnClose, true );
+            infoWidget_->close();
         }
+
+        infoWidget_ = new VehicleInformationWidget(this);
+        infoWidget_->setWindowFlag(Qt::Window);
         infoWidget_->show();
     });
 
