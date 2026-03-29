@@ -38,6 +38,8 @@
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
 
+#include <lt/diagnostics/vehicle_info.h>
+
 FlasherWindow::FlasherWindow(QWidget * parent)
     : QDialog(parent), linksList_(LT()->links())
 {
@@ -104,6 +106,61 @@ FlasherWindow::FlasherWindow(QWidget * parent)
 
 void FlasherWindow::buttonFlashClicked()
 {
+    lt::vehicle_info info;
+
+    // Get VIN from vehicle
+    catchWarning(
+        [&]() {
+
+            auto link = comboLink_->currentData(Qt::UserRole).value<lt::DataLink *>();
+            auto platform = selectedTune_->base()->model()->platform();
+            auto platformLink = std::make_unique<lt::PlatformLink>(*link, *platform);
+
+            lt::network::UdsPtr uds = platformLink->uds();
+
+            if (!uds)
+            {
+                Logger::warning("Platform or link does not support UDS");
+            }
+
+            info = lt::request_vehicle_info(*uds, lt::ScanPids::VIN);
+        },
+        tr("Error querying vehicle information"));
+
+    // Get VIN from ROM
+    char vin[11];
+
+    std::copy(selectedTune_->base()->begin() + 0x7080,
+              selectedTune_->base()->begin() + 0x708A,
+              vin);
+
+    vin[10] = '\0';
+
+    // Compare VINs and warn user if different
+    std::string ecuVin(info.vin.substr(2,10));//FIXME: Why start of string has 2 foreign chars??
+    Logger::warning("ECU VIN: " + ecuVin);
+
+    std::string romVin(vin);
+    Logger::warning("ROM VIN: " + romVin);
+
+    if (ecuVin != romVin)
+    {
+        // Alert the user of possible bricking
+        QMessageBox msgBox;
+        msgBox.setText("Are you sure you want to continue reprogramming");
+        msgBox.setInformativeText("ROM VIN does not match ECU VIN.");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+
+        if (msgBox.exec() == QMessageBox::No)
+        {
+            Logger::warning("User cancelled flashing");
+            return;
+        }
+    }
+
+    Logger::warning("Safety checks passed...");
+
     catchCritical(
         [this]() {
             auto link =
