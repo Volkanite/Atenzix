@@ -283,6 +283,11 @@ QDockWidget * MainWindow::createSidebarDock()
     return dock;
 }
 
+void MainWindow::previewTable(const lt::TableDefinition * table)
+{
+    sidebar_->fillTableInfo(table);
+}
+
 void MainWindow::setTable(const lt::TableDefinition * table)
 {
     if (table == nullptr)
@@ -291,7 +296,7 @@ void MainWindow::setTable(const lt::TableDefinition * table)
         return;
     }
 
-    sidebar_->fillTableInfo(table);
+    //sidebar_->fillTableInfo(table);
 
     if (auto it = views_.find(table->id); it != views_.end())
     {
@@ -342,6 +347,8 @@ QDockWidget * MainWindow::createTablesDock()
     dock->setWidget(tables_);
 
     connect(tables_, &TablesWidget::activated, this, &MainWindow::setTable);
+    connect(tables_, &TablesWidget::clicked, this, &MainWindow::previewTable);
+
     connect(this, &MainWindow::tuneChanged, [this](const lt::Tune * tune) {
         if (tune == nullptr)
             return;

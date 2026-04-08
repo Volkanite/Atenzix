@@ -66,6 +66,7 @@ public:
     void addRecent(const QString & path);
 
 public slots:
+    void previewTable(const lt::TableDefinition * modTable);
     void setTable(const lt::TableDefinition * modTable);
     void openCreateTune();
 

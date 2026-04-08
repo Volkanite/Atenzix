@@ -21,6 +21,12 @@ TablesWidget::TablesWidget(QWidget * parent) : QWidget(parent)
                 emit activated(item->data(0, Qt::UserRole)
                                    .value<const lt::TableDefinition *>());
             });
+
+    connect(view_, &QTreeWidget::itemClicked,
+            [this](const QTreeWidgetItem * item, int) {
+                emit clicked(item->data(0, Qt::UserRole)
+                                    .value<const lt::TableDefinition *>());
+            });
 }
 
 void TablesWidget::setModel(const lt::Model & model)

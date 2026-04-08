@@ -19,6 +19,7 @@ public:
 
 signals:
     void activated(const lt::TableDefinition * table);
+    void clicked(const lt::TableDefinition * table);
 
 public slots:
     void setModel(const lt::Model & model);
