@@ -1,8 +1,6 @@
-LibreTuner
+Atenzix
 =========
-Open source engine tuning software for Mazda platforms.
-- Continuing work of LibreTuner [(original project no longer in development)](https://github.com/LibreTuner/LibreTuner)
-- Project continues from the [master](https://github.com/LibreTuner/LibreTuner/tree/master) branch which uses the [0.1.3](https://github.com/LibreTuner/LibreTuner/releases/tag/v0.1.3) interface instead of the newer redesigned and [simplified](https://github.com/LibreTuner/LibreTuner/tree/simplify) interface of [0.1.4](https://github.com/LibreTuner/LibreTuner/releases/tag/0.1.4) (Overboost).
+A fork of [LibreTuner](https://github.com/LibreTuner/LibreTuner) - an open source engine tuning software for Mazda platforms; aiming to support the base Mazda Atenza.
 
 
 Screenshots
