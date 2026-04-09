@@ -1,11 +1,31 @@
 {
     "tables": {
-        "14": {
+        "SPD_LMT": {
             "datatype": "float",
             "category": "Limits",
             "width": 1,
             "name": "Speed Limit (Fuel cut)",
             "description": "Speed Limit (Fuel cut)"
+        },
+        "FAN1_OFF": {
+            "name": "Fan1 (Mid Speed) - ECT Deactivation Threshold",
+            "description": "Temperature required to disable the medium speed fan. The raw ECT value will need to be converted to real ECT value in °C.",
+            "category": "Engine Fan Control",
+            "width": 1,
+            "height": 1,
+            "datatype": "uint16",
+            "minimum": 103,
+            "maximum": 103
+        },
+        "FAN1_ON" : {
+            "name": "Fan1 (Mid Speed) - ECT Activation Threshold",
+            "description": "Temperature required to enable the medium speed fan. The raw ECT value will need to be converted to real ECT value in °C.",
+            "category": "Engine Fan Control",
+            "width": 1,
+            "height": 1,
+            "datatype": "uint16",
+            "minimum": 95,
+            "maximum": 95
         }
     },
     "baudrate": 500000,
@@ -16,6 +36,16 @@
         "downloadmode": "Mazda23"
     },
     "romsize": 524288,
+    "pids": [
+        {
+            "code": 5,
+            "description": "Coolant Temperature",
+            "formula": "a - 40",
+            "id": 0,
+            "unit": "temp_celsius",
+            "name": "Coolant Temperature"
+        }
+    ],
     "logmode": "uds",
     "auth": {
         "flash_sessionid": 133,
