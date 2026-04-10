@@ -50,6 +50,10 @@ void IsoTpJ2534::recv(IsoTpPacket & result)
         // Fill buffer
         if (msg.DataSize <= 4)
         {
+            // Connection probably broken; exit.
+            if (msg.DataSize == 0 && msg.ExtraDataIndex == 0 && msg.RxStatus == 0 && msg.Timestamp == 0 && msg.TxFlags == 0)
+                    return;
+
             // The message does not fit the CAN ID
             continue;
         }

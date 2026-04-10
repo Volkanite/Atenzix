@@ -14,7 +14,7 @@ struct IsoTpOptions
 {
     uint32_t sourceId = 0x7E0, destId = 0x7E8;
     uint32_t baudrate = 500000;
-    std::chrono::milliseconds timeout{6000};
+    std::chrono::milliseconds timeout{3000};
 };
 
 class IsoTpPacket
