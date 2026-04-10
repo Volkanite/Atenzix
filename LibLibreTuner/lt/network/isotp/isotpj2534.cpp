@@ -39,13 +39,34 @@ IsoTpJ2534::IsoTpJ2534(j2534::DevicePtr device, IsoTpOptions options)
 
 void IsoTpJ2534::recv(IsoTpPacket & result)
 {
+    //int empty = 0;
+
     while (true)
     {
         j2534::PASSTHRU_MSG msg{};
         msg.ProtocolID = static_cast<uint32_t>(j2534::Protocol::ISO15765);
 
         uint32_t pNumMsgs = 1;
-        channel_.readMsgs(&msg, pNumMsgs, static_cast<uint32_t>(options_.timeout.count()));
+        int32_t res = channel_.readMsgs(&msg, pNumMsgs, static_cast<uint32_t>(options_.timeout.count()));
+
+        if (res == ERR_TIMEOUT || res == ERR_BUFFER_EMPTY)
+        {
+            // Connection probably broken; exit.
+            return;
+        }
+
+        /*if (res == ERR_BUFFER_EMPTY)
+        {
+            if (empty > 1)
+            {
+                return;
+            }
+            else
+            {
+                empty++;
+                continue;
+            }
+        }*/
 
         // Fill buffer
         if (msg.DataSize <= 4)

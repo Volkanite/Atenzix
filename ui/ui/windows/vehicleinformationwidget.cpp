@@ -59,9 +59,18 @@ void VehicleInformationWidget::scan()
 
             lt::vehicle_info info =
                 lt::request_vehicle_info(*uds, lt::ScanPids::All);
-            lineVin_->setText(QString::fromStdString(info.vin));
-            lineCalibrationId_->setText(
-                QString::fromStdString(info.calibration_id));
+
+            if (info.vin.empty())
+                lineVin_->setText("(null)");
+            else
+                lineVin_->setText(QString::fromStdString(info.vin));
+
+            if (info.calibration_id.empty())
+                lineCalibrationId_->setText("(null)");
+            else
+                lineCalibrationId_->setText(
+                    QString::fromStdString(info.calibration_id));
+
             lineEcuName_->setText(QString::fromStdString(info.ecu_name));
         },
         tr("Error querying vehicle information"));

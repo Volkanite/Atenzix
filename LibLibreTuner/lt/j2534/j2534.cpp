@@ -46,10 +46,10 @@ DevicePtr J2534::open(const char * port)
     lt::log(ss.str());
     if ((res = PassThruOpen(
              const_cast<void *>(reinterpret_cast<const void *>(port)),
-             &deviceId)) != 0)
+             &deviceId)) != ERR_SUCCESS)
     {
-        if (res == 0x8)
-        { // ERR_DEVICE_NOT_CONNECTED
+        if (res == ERR_DEVICE_NOT_CONNECTED || res == ERR_OPEN_FAILED)
+        {
             // Return nullptr. Don't throw an exception,
             // because the absence of a device is not an exceptional error
             return nullptr;
@@ -64,7 +64,7 @@ void J2534::close(uint32_t device)
     assert(initialized());
 
     long res;
-    if ((res = PassThruClose(device)) != 0)
+    if ((res = PassThruClose(device)) != ERR_SUCCESS)
     {
         throw Error(lastError());
     }
@@ -81,7 +81,7 @@ uint32_t J2534::connect(uint32_t device, Protocol protocol, uint32_t flags,
             std::to_string(static_cast<uint32_t>(protocol)) + ", " +
             std::to_string(flags) + ", " + std::to_string(baudrate) + ")");
     if ((res = PassThruConnect(device, static_cast<uint32_t>(protocol), flags,
-                               baudrate, &channel)) != 0)
+                               baudrate, &channel)) != ERR_SUCCESS)
     {
         throw Error(lastError());
     }
@@ -89,15 +89,25 @@ uint32_t J2534::connect(uint32_t device, Protocol protocol, uint32_t flags,
     return channel;
 }
 
-void J2534::readMsgs(uint32_t channel, PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
+int J2534::readMsgs(uint32_t channel, PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
                      uint32_t timeout)
 {
     assert(initialized());
+
+    /*std::stringstream ss;
+    ss << "PassThruReadMsgs("
+       << reinterpret_cast<std::size_t>(reinterpret_cast<const void *>(timeout))
+       << ")";
+    lt::log(ss.str());*/
+
     int32_t res = PassThruReadMsgs(channel, pMsg, &pNumMsgs, timeout);
-    if (res != 0 && res != 0x09 && res != 0x10)
+
+    if (res != ERR_SUCCESS && res != ERR_TIMEOUT && res != ERR_BUFFER_EMPTY)
     {
         throw Error(lastError());
     }
+
+    return res;
 }
 
 void J2534::writeMsgs(uint32_t channel, PASSTHRU_MSG * pMsg,
@@ -105,7 +115,7 @@ void J2534::writeMsgs(uint32_t channel, PASSTHRU_MSG * pMsg,
 {
     assert(initialized());
     int32_t res = PassThruWriteMsgs(channel, pMsg, &pNumMsgs, timeout);
-    if (res != 0)
+    if (res != ERR_SUCCESS)
     {
         throw Error(lastError());
     }
@@ -120,7 +130,7 @@ void J2534::startMsgFilter(uint32_t channel, uint32_t type,
     assert(initialized());
     int32_t res = PassThruStartMsgFilter(channel, type, pMaskMsg, pPatternMsg,
                                          pFlowControlMsg, &pMsgID);
-    if (res != 0)
+    if (res != ERR_SUCCESS)
     {
         throw Error(lastError());
     }
@@ -131,7 +141,7 @@ void J2534::disconnect(uint32_t channel)
     assert(initialized());
 
     long res;
-    if ((res = PassThruDisconnect(channel)) != 0)
+    if ((res = PassThruDisconnect(channel)) != ERR_SUCCESS)
     {
         throw Error(lastError());
     }
@@ -253,11 +263,11 @@ Channel::Channel(Channel && chann) noexcept
 {
 }
 
-void Channel::readMsgs(PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
+int Channel::readMsgs(PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
                        uint32_t timeout)
 {
     assert(valid());
-    j2534_->readMsgs(channel_, pMsg, pNumMsgs, timeout);
+    return j2534_->readMsgs(channel_, pMsg, pNumMsgs, timeout);
 }
 
 void Channel::writeMsgs(PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
