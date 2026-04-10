@@ -110,7 +110,7 @@ void FlasherWindow::buttonFlashClicked()
 
     // Get VIN from vehicle
     catchWarning(
-        [&]() {
+            [&]() {
 
             auto link = comboLink_->currentData(Qt::UserRole).value<lt::DataLink *>();
             auto platform = selectedTune_->base()->model()->platform();
@@ -121,6 +121,8 @@ void FlasherWindow::buttonFlashClicked()
             if (!uds)
             {
                 Logger::warning("Platform or link does not support UDS");
+
+                return;
             }
 
             info = lt::request_vehicle_info(*uds, lt::ScanPids::VIN);
@@ -137,7 +139,13 @@ void FlasherWindow::buttonFlashClicked()
     vin[10] = '\0';
 
     // Compare VINs and warn user if different
-    std::string ecuVin(info.vin.substr(2,10));//FIXME: Why start of string has 2 foreign chars??
+    std::string ecuVin;
+
+    if (info.vin.empty())
+        ecuVin = "[null]";
+    else
+        ecuVin = info.vin.substr(2,10);//FIXME: Why start of string has 2 foreign chars??
+
     Logger::warning("ECU VIN: " + ecuVin);
 
     std::string romVin(vin);

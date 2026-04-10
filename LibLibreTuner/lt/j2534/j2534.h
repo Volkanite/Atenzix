@@ -75,6 +75,16 @@
 #define BLOCK_FILTER 0x00000002
 #define FLOW_CONTROL_FILTER 0x00000003
 
+////////////////
+// Error Values
+////////////////
+
+#define ERR_SUCCESS					0x00
+#define ERR_DEVICE_NOT_CONNECTED    0x08
+#define ERR_TIMEOUT                 0x09
+#define ERR_BUFFER_EMPTY			0x10
+#define ERR_OPEN_FAILED             0x22
+
 namespace lt
 {
 namespace j2534
@@ -209,7 +219,7 @@ public:
     /* Reads `pNumMsgs` messages or until the timeout expires. If timeout is 0,
      * reads the buffer and returns immediately. Sets pNumMsgs to the amount of
      messages actually read. Refer to the j2534 spec for more information. */
-    void readMsgs(PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs, uint32_t timeout);
+    int readMsgs(PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs, uint32_t timeout);
 
     /* Writes the array of `pMsg` (size `pNumMsgs`) until timeout expires. Is
      timeout is 0,
@@ -295,7 +305,7 @@ public:
     uint32_t connect(uint32_t device, Protocol protocol, uint32_t flags,
                      uint32_t baudrate);
 
-    void readMsgs(uint32_t channel, PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
+    int readMsgs(uint32_t channel, PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
                   uint32_t timeout);
     void writeMsgs(uint32_t channel, PASSTHRU_MSG * pMsg, uint32_t & pNumMsgs,
                    uint32_t timeout);

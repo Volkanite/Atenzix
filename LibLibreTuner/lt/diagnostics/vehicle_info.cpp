@@ -8,8 +8,18 @@ namespace lt
 vehicle_info request_vehicle_info(network::Uds & uds, ScanPids pids)
 {
     vehicle_info info{};
+
     if ((pids & ScanPids::VIN) != ScanPids::None)
+    {
         info.vin = request_service9_string(uds, OBD_REQ_VIN);
+
+        if (info.vin.empty())
+        {
+            //short circuit
+            return info;
+        }
+    }
+
     if ((pids & ScanPids::CalibrationID) != ScanPids::None)
         info.calibration_id = request_service9_string(uds, OBD_REQ_CAL);
     if ((pids & ScanPids::ECUName) != ScanPids::None)
