@@ -1,8 +1,10 @@
 {
    "tables": {
       "SPD_LMT": 31800,
+      "FAN1_ON": 35814,
       "FAN1_OFF": 35816,
-      "FAN1_ON": 35814
+      "FAN2_ON": 35818,
+      "FAN2_OFF": 35820
    },
    "identifiers": [
       {
