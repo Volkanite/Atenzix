@@ -2,10 +2,12 @@
     "tables": {
         "SPD_LMT": {
             "datatype": "float",
-            "category": "Limits",
+            "category": "Engine Limiters",
             "width": 1,
-            "name": "Speed Limit (Fuel cut)",
-            "description": "Speed Limit (Fuel cut)"
+            "name": "Speed Limiter - VSS Activation Threshold",
+            "description": "Speed Limit (Fuel cut)",
+            "minimum": 0.0,
+            "maximum": 180.0
         },
         "FAN1_OFF": {
             "name": "Fan1 (Mid Speed) - ECT Deactivation Threshold",
@@ -14,7 +16,7 @@
             "width": 1,
             "height": 1,
             "datatype": "uint16",
-            "minimum": 103,
+            "minimum": 84,
             "maximum": 103
         },
         "FAN1_ON" : {
@@ -24,8 +26,28 @@
             "width": 1,
             "height": 1,
             "datatype": "uint16",
-            "minimum": 95,
-            "maximum": 95
+            "minimum": 84,
+            "maximum": 103
+        },
+        "FAN2_OFF": {
+            "name": "Fan2 (High Speed) - ECT Deactivation Threshold",
+            "description": "Temperature required to disable the high speed fan. The raw ECT value will need to be converted to real ECT value in °C.",
+            "category": "Engine Fan Control",
+            "width": 1,
+            "height": 1,
+            "datatype": "uint16",
+            "minimum": 84,
+            "maximum": 103
+        },
+        "FAN2_ON" : {
+            "name": "Fan2 (High Speed) - ECT Activation Threshold",
+            "description": "Temperature required to enable the high speed fan. The raw ECT value will need to be converted to real ECT value in °C.",
+            "category": "Engine Fan Control",
+            "width": 1,
+            "height": 1,
+            "datatype": "uint16",
+            "minimum": 84,
+            "maximum": 103
         }
     },
     "baudrate": 500000,
