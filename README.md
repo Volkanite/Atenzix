@@ -1,6 +1,6 @@
 Atenzix
 =========
-A fork of [LibreTuner](https://github.com/LibreTuner/LibreTuner) - an open source engine tuning software for Mazda platforms; aiming to support the base Mazda Atenza.
+A fork of [LibreTuner](https://github.com/LibreTuner/LibreTuner), aiming to support the base Mazda Atenza.
 
 
 Screenshots
@@ -9,7 +9,7 @@ Screenshots
 
 Supported vehicles
 ------------------
-* 2002-2005 Mazda Atenza
+* 2002-2005 Mazda Atenza (L333EK0WZ03, L333ED0WZ03)  
 * 2005-2007 Mazdaspeed6 / Mazda 6 MPS / Mazdaspeed Atenza
 * MX-5 NC (Only editing)
 
