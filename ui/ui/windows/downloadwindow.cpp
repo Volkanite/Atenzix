@@ -127,11 +127,11 @@ void DownloadWindow::platformChanged(int /*index*/)
 void DownloadWindow::download()
 {
     lt::ProjectPtr project = comboProject_->selectedProject();
-    if (!project)
+    /*if (!project)
     {
         QMessageBox::critical(nullptr, tr("Invalid project"), tr("A project has not been selected."));
         return;
-    }
+    }*/
     catchCritical(
         [&]() {
             lt::PlatformLink pLink = getPlatformLink();
@@ -165,27 +165,34 @@ void DownloadWindow::download()
             if (!success)
                 throw std::runtime_error("Unknown error");
             auto data = downloader->data();
-            try
-            {
-                lt::ModelPtr model = pLink.platform().identify(data.first, data.second);
-                if (!model)
-                    throw std::runtime_error("Could not identify calibration");
 
-                lt::RomPtr rom = project->createRom(lineName_->text().toStdString(), model);
+            lt::ModelPtr model = pLink.platform().identify(data.first, data.second);
+
+            if (project && !model)
+                QMessageBox(QMessageBox::Information, "Download Finished", "Could not identify calibration").exec();
+
+            if (project && model)
+            {
+                std::string name;
+
+                if (lineName_->text().isEmpty())
+                    name = model->name;
+                else
+                    name = lineName_->text().toStdString();
+
+                lt::RomPtr rom = project->createRom(name, model);
+
                 rom->setData(lt::MemoryBuffer(data.first, std::next(data.first, data.second)));
                 rom->save();
 
-                QMessageBox(QMessageBox::Information, "Download Finished", "ROM downloaded successfully").exec();
+                QMessageBox(QMessageBox::Information, "Download Finished", "ROM added to project successfully").exec();
             }
-            catch (const std::runtime_error & err)
+            else
             {
                 QMessageBox msgBox;
-                msgBox.setWindowTitle("Download Error");
-                msgBox.setText("The ROM was downloaded, but an error occurred while "
-                               "saving. Would you like to save the binary data? "
-                               "Please send this to the LibreTuner developers. In the "
-                               "future, this will be automatic.");
-                msgBox.setInformativeText(err.what());
+                msgBox.setWindowTitle("Download Success");
+                msgBox.setText("The ROM was downloaded. Would you like to save the binary data?");
+                //msgBox.setInformativeText(err.what());
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::Yes);
 
